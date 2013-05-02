@@ -1,0 +1,380 @@
+<!doctype html>
+<!--                                                  _
+                                                     | |
+   _ __   __ _ _ __ _   _ _ __ ___   __ _ _ __    ___| |__
+  | '_ \ / _` | '__| | | | '_ ` _ \ / _` | '_ \  / __| '_ \
+  | | | | (_| | |  | |_| | | | | | | (_| | | | |_\__ \ | | |
+  |_| |_|\__, |_|   \__, |_| |_| |_|\__,_|_| |_(_)___/_| |_|
+          __/ |      __/ |
+         |___/      |___/
+
+  Because ASCII art matters...
+
+  I salute you young h@x0r.
+  I invite you to open the humans.txt file for more info about some cool stuff used to make this blog.
+
+  May the source be with you :)
+
+  ~ngryman();
+-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <base href="D:\Users\ngryman\Code\ngryman.sh/">
+    <title>ngryman.sh • Simulate mouse / touch events with jQuery in PhantomJS and the browser</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <link rel="canonical" href="d:\Users\ngryman\Code\ngryman.sh/articles/simulate-mouse--touch-events-with-jquery-in-phantomjs-and-the-browser">
+    <link href="favicon.ico" rel="icon">
+
+    <!-- twitter cards -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Simulate mouse / touch events with jQuery in PhantomJS and the browser">
+    <!--<meta name="twitter:image" content="http://ngryman.sh/articles/simulate-mouse--touch-events-with-jquery-in-phantomjs-and-the-browser.jpg?w=120">-->
+    <meta name="twitter:url" content="d:\Users\ngryman\Code\ngryman.sh/articles/simulate-mouse--touch-events-with-jquery-in-phantomjs-and-the-browser">
+    <meta name="twitter:description" content="For my little project jQuery Finger, I wanted to be able to continuously test it while coding.
+This can be easily achieved using the magic combo of Grunt, Mocha (with Chai) and PhantomJS.
+I just had t">
+    <meta name="twitter:site" content="@ngryman">
+    <meta name="twitter:creator" content="@ngryman">
+
+    <!-- open graph -->
+    <meta property="og:type" content="article">
+    <!--<meta property="og:title" content="http://ngryman.sh/articles/simulate-mouse--touch-events-with-jquery-in-phantomjs-and-the-browser.jpg?w=120">-->
+    <meta property="og:image" content="Simulate mouse / touch events with jQuery in PhantomJS and the browser">
+    <meta property="og:url" content="d:\Users\ngryman\Code\ngryman.sh/articles/simulate-mouse--touch-events-with-jquery-in-phantomjs-and-the-browser">
+    <meta property="og:description" content="For my little project jQuery Finger, I wanted to be able to continuously test it while coding.
+This can be easily achieved using the magic combo of Grunt, Mocha (with Chai) and PhantomJS.
+I just had t">
+    <meta property="og:site_name" content="http://ngryman.sh">
+
+    <link href="vendor/prism/prism.css" rel="stylesheet">
+    <link href="app.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<main>
+    <article>
+
+        <h1>Simulate mouse / touch events with jQuery in PhantomJS and the browser</h1>
+
+        <p class="author vcard">
+            <span>By</span>
+            <a class="url fn" rel="author" href="https://plus.google.com/116260634660700511285">Nicolas Gryman</a>.
+            </span>
+        </p>
+
+        <p>For my little project <a href="https://github.com/ngryman/jquery.finger">jQuery Finger</a>, I wanted to be able to continuously test it while coding.
+This can be easily achieved using the magic combo of <a href="http://gruntjs.com">Grunt</a>, <a href="http://visionmedia.github.com/mocha">Mocha</a> (with <a href="http://chaijs.com">Chai</a>) and <a href="http://phantomjs.org">PhantomJS</a>.</p>
+<p>I just had to launch <code>grunt watch</code> and listen to the evil <em>bip</em> telling me &quot;test have failed, you suck nooby noob!&quot;.</p>
+<p>This is what I wanted, but things became more complicated when I wanted to run tests with more advanced user inputs such as <em>tap</em>, <em>double tap</em>, <em>long tap</em>, <em>drag</em> and <em>swipe</em>, across multiple elements.</p>
+<p>I have tried to use <code>MouseEvents</code> and <code>TouchEvent</code> to simulate it, but I couldn&#39;t make it work properly with <strong>PhantomJS</strong>. If somebody has successfully achieved this, I&#39;m interested in!</p>
+<p>The code of this article is <a href="https://github.com/ngryman/virtual-pointer">hosted here</a>. Use it, fork it!</p>
+<h2>jQuery is your best friend</h2>
+<p>For <a href="https://github.com/ngryman/jquery.finger">jQuery Finger</a>, I must use <em>jQuery</em> as a direct dependency. That&#39;s convenient I guess because <em>jQuery</em> has the ability to trigger events, and particulary mouse/touch events. It adds an abstraction above <em>native</em> events which was very handy for me.</p>
+<p>The caveat of using jQuery to trigger events is that you must register <strong>jQuery events specifically</strong>. You can&#39;t trigger a jQuery <code>click</code> and hope catching it if you registered your listener with <code>addEventListener</code>. <em>jQuery</em> simply triggers an event using its own internal sugar. If this is a blocker for you, this article might still be interesting because the global idea remains the same.</p>
+<h2>Manage your virtual pointer</h2>
+<p>So how can we try to simulate pointer events ?</p>
+<p>We can use the magic of the <code>document.elementFromPoint</code> function. It tells which DOM element lives at the given position. AFAIK it is supported since quite a long time.</p>
+<p>All we have to do, is to keep track of coordinates. When we want to trigger an event, we retreive the DOM element, and call <code>jQuery.fn.trigger</code> on it. Simple as pie.</p>
+<p>Here is the first draft of our <strong>virtual pointer</strong>:</p>
+<pre><code class="language-javascript">var VirtualPointer = (function () {
+  var hasTouch = &#39;ontouchstart&#39; in window,
+      startEvent = hasTouch ? &#39;touchstart&#39; : &#39;mousedown&#39;,
+      stopEvent = hasTouch ? &#39;touchend&#39; : &#39;mouseup&#39;,
+      moveEvent = hasTouch ? &#39;touchmove&#39; : &#39;mousemove&#39;;
+
+  return {
+    x: 0,
+    y: 0,
+
+    trigger: function (evtName) {
+      var $el = $(document.elementFromPoint(this.x, this.y));
+      $el.trigger(new $.Event(evtName, {
+        pageX: this.x,
+        pageY: this.y,
+        originalEvent: {
+          touches: [{
+            pageX: this.x,
+            pageY: this.y
+          }]
+        }
+      }));
+    },
+
+    click: function () {
+      this.trigger(&#39;click&#39;);
+    },
+
+    tapStart: function () {
+      this.trigger(startEvent);
+    },
+
+    tapEnd: function () {
+      this.trigger(stopEvent);
+    },
+
+    tap: function () {
+      this.tapStart();
+      this.tapEnd();
+    },
+
+    START_EVENT: startEvent,
+    STOP_EVENT: stopEvent,
+    MOVE_EVENT: moveEvent
+  };
+}());</code></pre>
+<p>With this first version, we can easily:</p>
+<ul>
+<li>change the position of the pointer with <code>x</code> and <code>y</code>.</li>
+<li>simulate a <code>click</code>.</li>
+<li>simulate a <code>mousedown mouseup</code> / <code>touchstart touchend</code> by calling <code>tap</code>, assuming we register events with <code>VirtualPointer.START_EVENT</code> or <code>VirtualPointer.STOP_EVENT</code>.</li>
+</ul>
+<p>A classic <em>jQuery</em> event is built on top of a <em>native event</em> that you can access with the <code>originalEvent</code> property. Some handy properties are directly copied to the <em>jQuery</em> event object.</p>
+<p><code>pageX</code> and <code>pageY</code> are of these. They give the pointer <em>absolute</em> coordinates when the event is fired. <em>jQuery</em> tries to unify these properties accross every browser. But, on some mobile browsers, such as <strong>Mobile Safari</strong>, <code>pageX</code> and <code>pageY</code> stay to <code>0</code>. The only trustable source for coordinates resides in the <code>event.originalEvent.touches[0]</code> properties.</p>
+<p>The problem is when you manually trigger a <em>jQuery</em> event, it is created from scratch. So <code>pageX</code>, <code>pageY</code> and <code>originalEvent</code> are missing. We have to create them manually and forward our <strong>virtual pointer</strong>&#39;s coordinates.</p>
+<h2>Let&#39;s add <code>press</code> and <code>doubletap</code> event</h2>
+<p><code>press</code> event is an alias for a <strong>long tap</strong> event.</p>
+<p>Here is the updated version of our initial <strong>virtual pointer</strong>:</p>
+<pre><code class="language-javascript">return {
+  // [...]
+  press: function (callback, duration) {
+    var self = this;
+    duration = duration || this.PRESS_DURATION * 1.5 /* security */;
+    this.tapStart();
+    setTimeout(function () {
+      self.tapEnd();
+      if (callback) callback.call(self);
+    }, duration);
+  },
+
+  doubleTap: function (callback, duration) {
+    var self = this;
+    duration = duration || this.DOUBLETAP_DURATION * 0.5 /* security */;
+    this.tap();
+    setTimeout(function () {
+      self.tap();
+      callback.call(self);
+    }, duration);
+  },
+
+  // [...]
+  PRESS_DURATION: 300,
+  DOUBLETAP_DURATION: 300,
+};</code></pre>
+<p>The code is pretty self explanatory.</p>
+<p>I will just explain the <em>security</em> multiplier. <code>setTimeout</code> is a cool bro, but he is not very punctual. So, if your code really depends on a <strong>time threshold</strong>, you should never put the <code>setTimeout</code> value to that <strong>threshold</strong>, or near it. By applying a <strong>+0.5/-0.5</strong> security multiplier, you are always sure that you will be either on one or the other side.</p>
+<h2>Now let&#39;s add some motion</h2>
+<p>To handle motion, we will have to pretend that the cursor is ... moving, woot!</p>
+<p>We will need <strong>destination coordinates</strong> and a <strong>duration</strong>. Our job will be to interpolate coordinates between current and destination, and call the <code>mousemove</code>/<code>touchmove</code> event at a given interval.</p>
+<p>In real life, motion events may be triggered <strong>at a very, perhaps sometimes too high rate</strong> (i.e. *Chrome&#39;s rate is around every <code>2ms</code>).<br>
+We won&#39;t be able to be so precise, but who cares? We will just use our good old friend <code>setTimeout</code> with a <code>0</code> timeout to simulate AMAP fake moves.</p>
+<p>Here is the update:</p>
+<pre><code class="language-javascript">return {
+  // [...]
+  move: function (x, y, callback, duration) {
+    var self = this,
+        last = Date.now(),
+        t = 0,
+        timer;
+
+    this.tapStart();
+
+    var sx = this.x,
+        sy = this.y;
+    (function mv() {
+      var now = Date.now();
+      t += now - last;
+      if (t &gt;= duration) {
+        self.tapEnd();
+        callback.call(self);
+        return;
+      }
+      last = now;
+
+      self.x = Math.ceil(t / duration * x) + sx;
+      self.y = Math.ceil(t / duration * y) + sy;
+
+      self.trigger(moveEvent);
+      timer = setTimeout(mv, 0);
+    })();
+  },
+
+  // [...]
+};</code></pre>
+<p>Now, we can call <code>move</code> to simulate motion, and <code>tapStart</code>, <code>move</code>, <code>tapEnd</code> sequence to simulate some kind of drag. Great!</p>
+<h2>Let&#39;s finish him!</h2>
+<p>With those three utility functions, we are now able to simulate gestures.</p>
+<p>Right of the <em>Batman</em>, here is our final code:</p>
+<pre><code class="language-javascript">var VirtualPointer = (function () {
+  var hasTouch = &#39;ontouchstart&#39; in window,
+      startEvent = hasTouch ? &#39;touchstart&#39; : &#39;mousedown&#39;,
+      stopEvent = hasTouch ? &#39;touchend&#39; : &#39;mouseup&#39;,
+      moveEvent = hasTouch ? &#39;touchmove&#39; : &#39;mousemove&#39;;
+
+  return {
+    x: 0,
+    y: 0,
+
+    trigger: function (evtName) {
+      var $el = $(document.elementFromPoint(this.x, this.y));
+      $el.trigger(new $.Event(evtName, {
+        pageX: this.x,
+        pageY: this.y,
+        originalEvent: {
+          touches: [{
+            pageX: this.x,
+            pageY: this.y
+          }]
+        }
+      }));
+    },
+
+    click: function () {
+      this.trigger(&#39;click&#39;);
+    },
+
+    tapStart: function () {
+      this.trigger(startEvent);
+    },
+
+    tapEnd: function () {
+      this.trigger(stopEvent);
+    },
+
+    move: function (x, y, callback, duration) {
+      var self = this,
+          last = Date.now(),
+          t = 0,
+          timer;
+
+      this.tapStart();
+
+      var sx = this.x,
+          sy = this.y;
+      (function mv() {
+        var now = Date.now();
+        t += now - last;
+        if (t &gt;= duration) {
+          self.tapEnd();
+          callback.call(self);
+          return;
+        }
+        last = now;
+
+        self.x = Math.ceil(t / duration * x) + sx;
+        self.y = Math.ceil(t / duration * y) + sy;
+
+        self.trigger(moveEvent);
+        timer = setTimeout(mv, 0);
+      })();
+    },
+
+    tap: function () {
+      this.tapStart();
+      this.tapEnd();
+    },
+
+    press: function (callback, duration) {
+      var self = this;
+      duration = duration || this.PRESS_DURATION * 1.5 /* security */;
+      this.tapStart();
+      setTimeout(function () {
+        self.tapEnd();
+        if (callback) callback.call(self);
+      }, duration);
+    },
+
+    doubleTap: function (callback, duration) {
+      var self = this;
+      duration = duration || this.DOUBLETAP_DURATION * 0.5 /* security */;
+      this.tap();
+      setTimeout(function () {
+        self.tap();
+        callback.call(self);
+      }, duration);
+    },
+
+    drag: function (x, y, callback, duration) {
+      duration = duration || this.FLICK_DURATION * 1.5 /* security */;
+      this.move(x, y, callback, duration);
+    },
+
+    flick: function (x, y, callback, duration) {
+      duration = duration || this.FLICK_DURATION * 0.5 /* security */;
+      this.move(x, y, callback, duration);
+    },
+
+    START_EVENT: startEvent,
+    STOP_EVENT: stopEvent,
+    MOVE_EVENT: moveEvent,
+
+    PRESS_DURATION: 300,
+    DOUBLETAP_DURATION: 300,
+    FLICK_DURATION: 300
+  };
+}());</code></pre>
+<p>That&#39;s it! This is a basic implementation of our <strong>virtual pointer</strong>. It should allow us to simulate mouse/touch events in the browser and in <strong>PhantomJS</strong>.</p>
+<p>As a side note, <strong>PhantomJS</strong> is detected as a touch device because <code>window.ontouchstart</code> is defined. This appears to be something common with some <em>WebKit</em> forks.</p>
+<h2>Bonus: prevent user interaction</h2>
+<p>During the simulation we <strong>don&#39;t want</strong> any real event messing around with our tests.<br>
+Well, keep your hand away from your mouse, that&#39;s it!</p>
+<p>No, you can&#39;t? Ok...<br></p>
+<p>When you trigger an event with <em>jQuery</em>, it comes with an additional property <code>isTrigger</code>. So, basically, in your event handlers you can tell if this is a <em>fake</em> or a <em>real</em> event.<br>
+In our case, we are only interested in <em>fake</em> events, not <em>real</em> ones.</p>
+<p>The only <em>satisfying</em> solution I found is proxying each <em>jQuery</em> event handlers and skipping <em>real</em> ones.</p>
+<p>We could just prepend our event listeners with something like this:</p>
+<pre><code class="language-javascript">$(&#39;.elem&#39;).on(VirtualPointer.MOVE_EVENT, function(e) {
+  if (!e.isTrigger) return;
+
+  // handler code
+});</code></pre>
+<p>But do we? Not really... Let&#39;s use <code>jQuery.event.special</code> in our test environment to <em>proxy</em> every jQuery event handler dynamically:</p>
+<pre><code class="language-javascript">$.each(&#39;click mousedown mouseup mousemove mouseleave touchstart touchmove touchend&#39;.split(&#39; &#39;), function(i, evtName) {
+  $.event.special[evtName] = {
+    add: function(handleObj) {
+      var oldHandler = handleObj.handler;
+      handleObj.handler = function(event) {
+        if (event.isTrigger) {
+          oldHandler.apply(this, arguments);
+        }
+      };
+    }
+  };
+});</code></pre>
+<p>Just be sure you execute this code before running your tests and registering your events. You will then be able to <em>harlem shake</em> your mouse / fingers without any side effect.</p>
+<h2>Finally</h2>
+<p>Everything in this article is included in the <a href="https://github.com/ngryman/virtual-pointer">Github version</a>, plus some additional bonuses:</p>
+<ul>
+<li>an example of <em>Mocha</em> integration in the very simple <a href="https://raw.github.com/ngryman/virtual-pointer/master/test/virtual-pointer_test.js">test suite</a>.</li>
+<li>the possibility to specify a custom scope for callbacks.</li>
+<li>the possibility to auto reset coordinates on each <code>tapStart</code>.</li>
+</ul>
+<p>Also, you can take a look at <a href="https://github.com/ngryman/jquery.finger">jQuery Finger</a> :-)</p>
+
+
+        <section id="comments">
+            <div id="disqus_thread"></div>
+        </section>
+    </article>
+</main>
+
+<!-- external deps, from a global cdn -->
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+
+<!-- external deps, hosted with bibi -->
+<script src="vendor/prism/prism.min.js"></script>
+
+<!--application-->
+<script src="app.js"></script>
+
+</body>
+</html>

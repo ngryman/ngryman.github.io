@@ -1,0 +1,7 @@
+/* Breaking Bad Story Sync was made by LVL Studio, QC Canada */
+/* humanstxt.org */
+
+/* SITE */
+  Standards: HTML5, CSS3
+  Components: jQuery, LoDash, jQuery.transit
+  Software: IntelliJ

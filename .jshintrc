@@ -1,0 +1,22 @@
+{
+	"curly": true,
+	"eqeqeq": false,
+	"immed": true,
+	"latedef": false,
+	"newcap": true,
+	"noarg": true,
+	"sub": true,
+	"undef": true,
+	"boss": true,
+	"eqnull": true,
+	"node": true,
+	"browser": true,
+	"es5": true,
+	"expr": true,
+	"globals": {
+		"$": true,
+		"describe": true,
+		"after": true,
+		"it": true
+	}
+}
