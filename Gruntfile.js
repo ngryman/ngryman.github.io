@@ -17,11 +17,11 @@ module.exports = function(grunt) {
 			files: ['Gruntfile.js', 'tasks/*.js', 'scripts/**/*.js']
 		},
 		concat: {
-			options: {
-				stripBanners: true,
-				banner: '<%= meta.banner %>\n'
-			},
-			dist: {
+			all: {
+				options: {
+					stripBanners: true,
+					banner: '<%= meta.banner %>\n'
+				},
 				src: 'scripts/**/*.js',
 				dest: 'app.js'
 			}
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			files: '<%= jshint.files %>',
-			tasks: ['default']
+			tasks: ['local']
 		},
 		connect: {
 			server: {
@@ -84,12 +84,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks('grunt-mocha');
-	require('./tasks/blog')(grunt);
+	grunt.loadTasks('tasks');
 
 	grunt.registerTask('default', ['jshint', 'concat']);
 
-	grunt.registerTask('local', ['jshint'/*, 'concat:dist'*/, 'blog:local']);
-	grunt.registerTask('dist', ['jshint', 'concat:dist', 'blog:dist']);
-
-	grunt.registerTask('deploy', ['dist', 'blog:deploy']);
+	grunt.registerTask('local', ['jshint', 'concat', 'blog:local']);
+	grunt.registerTask('dist', ['jshint', 'concat', 'blog:dist']);
 };
