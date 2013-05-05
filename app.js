@@ -1,4 +1,4 @@
-/*! ngryman.sh - v0.0.1-50 - 2013-04-29
+/*! ngryman.sh - v0.0.1-50 - 2013-05-05
 * Copyright (c) 2013 ; Licensed MIT */
 
 (function() {
@@ -43,16 +43,18 @@
 	 */
 	function githubProjects() {
 		$.getJSON('https://api.github.com/users/ngryman/repos?sort=pushed', function(projects) {
+			// max projects to 10 - too much is too much
 			projects.length = 10;
 
+			// projects list - builds up Prism HTML to render as a JavaScript array
 			var projectsHtml = projects.map(function(project) {
 				return '  <span class="token string">"<a class="token md-link" href="' + project.html_url + '">' + project.name + '</a>"</span>';
 			}).join('<span class="token punctuation">,\n</span>') + '\n';
 
+			// projects injection - inject it in place of the /* loading... */ placeholder
 			var $placeholder = $('.token.comment').filter(function() {
 				return this.innerHTML == '[/* loading... */';
 			});
-
 			$placeholder.replaceWith('<span class="token punctuation">[</span>\n' + projectsHtml);
 		});
 	}

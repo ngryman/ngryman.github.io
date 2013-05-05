@@ -182,38 +182,56 @@ em {
   font-weight: normal;
 }
 
-/* line 21, scss/app.scss */
+/* line 17, scss/app.scss */
 main {
   min-height: 100%;
   padding: 1em;
 }
 @media (min-width: 25em) {
-  /* line 21, scss/app.scss */
+  /* line 17, scss/app.scss */
   main {
     padding: 2rem 4rem;
   }
 }
 @media (min-width: 62.5em) {
-  /* line 21, scss/app.scss */
+  /* line 17, scss/app.scss */
   main {
     width: 80rem;
     margin: 0 auto;
-    /* fallback if calc is not supported */
   }
 }
 
-/* line 35, scss/app.scss */
-#epiceditor {
-  visibility: hidden;
-  height: 800px;
+/* line 33, scss/app.scss */
+.me {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  width: 6rem;
+  height: 6rem;
+  -webkit-box-shadow: 0 0 5px #aeaeae;
+  -moz-box-shadow: 0 0 5px #aeaeae;
+  box-shadow: 0 0 5px #aeaeae;
+  -webkit-transform: rotate(5deg);
+  -moz-transform: rotate(5deg);
+  -ms-transform: rotate(5deg);
+  -o-transform: rotate(5deg);
+  transform: rotate(5deg);
+}
+@media (min-width: 42.5em) {
+  /* line 33, scss/app.scss */
+  .me {
+    width: 8rem;
+    height: 8rem;
+  }
 }
 
-/* line 44, scss/app.scss */
+/* line 51, scss/app.scss */
 pre[class*='language-'] {
+  position: relative;
   overflow-x: hidden;
   /* this is to avoid sometimes initial useless scrollbar */
 }
-/* line 46, scss/app.scss */
+/* line 54, scss/app.scss */
 pre[class*='language-'] code {
   opacity: 0;
   -webkit-transition: opacity 1s;
@@ -221,21 +239,21 @@ pre[class*='language-'] code {
   -o-transition: opacity 1s;
   transition: opacity 1s;
 }
-/* line 50, scss/app.scss */
+/* line 58, scss/app.scss */
 pre[class*='language-'].highlighted {
   overflow-x: auto;
 }
-/* line 52, scss/app.scss */
+/* line 60, scss/app.scss */
 pre[class*='language-'].highlighted code {
   opacity: 1;
 }
 
-/* line 58, scss/app.scss */
+/* line 66, scss/app.scss */
 .token a {
   color: #41b7d8;
 }
 
-/* line 66, scss/app.scss */
+/* line 74, scss/app.scss */
 #comments {
   margin-top: 6rem;
 }

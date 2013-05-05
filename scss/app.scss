@@ -10,14 +10,10 @@
 //// classes
 @import 'base';
 @import 'fonts';
+
 //@import 'icons';
 //@import 'anims';
-//
-////
-//// sections - groups bunch of content together
-//// Section are visually well delimited to let the user navigate easily and jump to the most interesting section for him.
-////
-//
+
 main {
 	min-height: 100%;
 	padding: 1em;
@@ -26,15 +22,26 @@ main {
 	}
 	@include xlarge-size-and-up {
 		width: 80rem;
-		margin: 0 auto; /* fallback if calc is not supported */
-		//margin: 1rem -webkit-calc(50% - 50rem);
-		//margin: 1rem -moz-calc(50% - 50rem);
+		margin: 0 auto;
 	}
 }
 
-#epiceditor {
-	visibility: hidden;
-	height: 800px;
+//
+// me
+//
+
+.me {
+	position: absolute;
+	right: 1rem;
+	top: 1rem;
+	width: 6rem;
+	height: 6rem;
+	@include box-shadow(0 0 5px #aeaeae);
+	@include rotate(5deg);
+	@include large-size-and-up {
+		width: 8rem;
+		height: 8rem;
+	}
 }
 
 //
@@ -42,6 +49,7 @@ main {
 //
 
 pre[class*='language-'] {
+	position: relative;
 	overflow-x: hidden; /* this is to avoid sometimes initial useless scrollbar */
 	code {
 		opacity: 0;
@@ -66,122 +74,3 @@ pre[class*='language-'] {
 #comments {
 	margin-top: 6rem;
 }
-
-//
-//
-//section:first-child {
-//	background-color: #333;
-//	background-image: -webkit-linear-gradient(#2e2e2e 2px, transparent 1px), -webkit-linear-gradient(left, #2e2e2e 2px, transparent 1px);
-//	background-image: -moz-linear-gradient(#2e2e2e 2px, transparent 1px), -moz-linear-gradient(left, #2e2e2e 2px, transparent 1px);
-//	background-size: 3px 3px;
-//	background-position: -1px -1px, -1px -1px;
-//	color: #bbb;
-//
-//	h2 {
-//		color: #bbb;
-//		text-align: center;
-//	}
-//	p {
-//		line-height: 3rem;
-//	}
-//}
-//
-////
-//// actions - provides github and download buttons
-////
-//
-//.actions {
-//	margin: 4rem 0;
-//	@include normal-size-and-up {
-//		text-align: center;
-//	}
-//
-//	a {
-//		display: inline-block;
-//		border: 2px solid #bbb;
-//		border-radius: 5px;
-//		background: #bbb;
-//		padding: 1rem;
-//		width: 100%;
-//		font-size: 1.6rem;
-//		color: #333;
-//		line-height: 2rem;
-//		vertical-align: middle;
-//		text-decoration: none;
-//		@include text-shadow(1px 1px 2px #888);
-//		@include transition(.2s);
-//		@include normal-size-and-up {
-//			margin-left: 1rem;
-//			width: 18rem;
-//		}
-//
-//		&:first-child {
-//			@include normal-size-and-below {
-//				margin-bottom: 2rem;
-//			}
-//		}
-//
-//		&:hover {
-//			@include box-shadow(0 0 5px #bcec4b);
-//			border-color: #bcec4b;
-//			background: black;
-//			color: #9ac847;
-//			@include text-shadow(none);
-//		}
-//	}
-//}
-//
-////
-//// touch zone - let the user test jquery.finger
-//// Let the user play with a funny visual feedback :)
-////
-//
-//#touchzone {
-//	position: relative;
-//	margin: 2rem auto;
-//	border: 10px solid rgba(255, 255, 255, .2);
-//	background: #a5b83e;
-//	padding-top: 75%;
-//	width: 100%;
-//	cursor: -webkit-grab;
-//	cursor: -moz-grab;
-//	@include experimental(user-select, none);
-//	@include large-size-and-up {
-//		padding-top: 0;
-//		width: 60rem;
-//		height: 45rem;
-//	}
-//
-//	&::after {
-//		content: attr(data-event);
-//	}
-//
-//	&.grabbing {
-//		cursor: -webkit-grabbing;
-//		cursor: -moz-grabbing;
-//	}
-//}
-//
-//// visual indicator on the location of the tap
-//#nipple {
-//	position: absolute;
-//	//opacity: 0;
-//	border: 4px solid rgba(255, 255, 255, .8);;
-//	border-radius: 100%;
-//	background: rgba(255, 255, 255, .5);
-//	pointer-events: none; /* pass through */
-//	//-webkit-transform: scale(.6);
-//
-//	&.tap {
-//		@include animation(bounceIn .2s linear alternate 2);
-//	}
-//}
-//
-////
-//// misc
-////
-//
-//// gives pre a wider margin that prism does
-//pre[class*="language-"] {
-//	margin: 1.5rem 0;
-//}
