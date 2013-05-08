@@ -53,7 +53,7 @@ module.exports = function(grunt) {
 			meta.title = 'Index';
 
 			// articles juggling - sort by created date desc and filters only published ones
-			meta.articles = _.sortBy(_.filter(articles, 'published'), 'created');
+			meta.articles = _.sortBy(_.filter(articles, 'published'), 'created').reverse();
 
 			// apply layout
 			fs.readFile('layouts/index.ejs', 'utf8', function(err, content) {
