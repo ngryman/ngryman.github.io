@@ -1,0 +1,123 @@
+<!doctype html>
+<!--                                                  _
+                                                     | |
+   _ __   __ _ _ __ _   _ _ __ ___   __ _ _ __    ___| |__
+  | '_ \ / _` | '__| | | | '_ ` _ \ / _` | '_ \  / __| '_ \
+  | | | | (_| | |  | |_| | | | | | | (_| | | | |_\__ \ | | |
+  |_| |_|\__, |_|   \__, |_| |_| |_|\__,_|_| |_(_)___/_| |_|
+          __/ |      __/ |
+         |___/      |___/
+
+  Because ASCII art matters...
+
+  I salute you young h@x0r.
+  I invite you to open the humans.txt file for more info about some cool stuff used to make this blog.
+
+  May the source be with you :)
+
+  ~ngryman();
+-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <base href="http://ngryman.sh">
+    <title>ngryman.sh • System V with forever for your node.js application</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <link rel="canonical" href="http://ngryman.sh/articles/system-v-with-forever-for-your-node.js-application">
+    <link href="favicon.ico" rel="icon">
+
+    <!-- twitter cards -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="System V with forever for your node.js application">
+    <!--<meta name="twitter:image" content="http://ngryman.sh/articles/system-v-with-forever-for-your-node.js-application.jpg?w=120">-->
+    <meta name="twitter:url" content="http://ngryman.sh/articles/system-v-with-forever-for-your-node.js-application">
+    <meta name="twitter:description" content="The alternative to its Upstart brother
+on a Debian system with the same use case.
+Here it is:
+
+
+To enable your boot script:
+
+Remove the .sh extension from the gist.
+Move it into the /etc/init.d direct">
+    <meta name="twitter:site" content="@ngryman">
+    <meta name="twitter:creator" content="@ngryman">
+
+    <!-- open graph -->
+    <meta property="og:type" content="article">
+    <!--<meta property="og:title" content="http://ngryman.sh/articles/system-v-with-forever-for-your-node.js-application.jpg?w=120">-->
+    <meta property="og:image" content="System V with forever for your node.js application">
+    <meta property="og:url" content="http://ngryman.sh/articles/system-v-with-forever-for-your-node.js-application">
+    <meta property="og:description" content="The alternative to its Upstart brother
+on a Debian system with the same use case.
+Here it is:
+
+
+To enable your boot script:
+
+Remove the .sh extension from the gist.
+Move it into the /etc/init.d direct">
+    <meta property="og:site_name" content="http://ngryman.sh">
+
+    <link href="vendor/prism/prism.css" rel="stylesheet">
+    <link href="app.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<main>
+    <article>
+
+        <h1>System V with forever for your node.js application</h1>
+
+        <p class="author vcard">
+            <span>By</span>
+            <a class="url fn" rel="author" href="https://plus.google.com/116260634660700511285">Nicolas Gryman</a>.
+            </span>
+        </p>
+
+        <p>The alternative to its Upstart <a href="http://ngryman.tumblr.com/post/32830060834/upstart-with-forever-for-your-nodejs-application">brother</a>
+on a <strong>Debian</strong> system with the same use case.</p>
+<p>Here it is:</p>
+<script src="https://gist.github.com/ngryman/3834896.js"></script>
+
+<p>To enable your boot script:</p>
+<ul>
+<li>Remove the .sh extension from the gist.</li>
+<li>Move it into the /etc/init.d directory.</li>
+<li>Make it executable by running sudo chmod 755 /etc/init.d/service.</li>
+<li>Register the script for (re)boot by running update-rc.d service defaults.</li>
+</ul>
+<h2>See also</h2>
+<ul>
+<li><a href="http://ngryman.tumblr.com/post/32830060834/upstart-with-forever-for-your-nodejs-application">Upstart with forever for your node.js application</a></li>
+<li><a href="http://www.debian-administration.org/articles/28">Making scripts run at boot time with Debian</a></li>
+<li><a href="http://wiki.debian.org/LSBInitScripts">How to LSBize an Init Script</a></li>
+</ul>
+
+
+        <section id="comments">
+            <div id="disqus_thread"></div>
+        </section>
+    </article>
+</main>
+
+<!-- external deps, from a global cdn -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+
+<!-- external deps, hosted with bibi -->
+<script src="vendor/prism/prism.min.js"></script>
+
+<!--application-->
+<script src="app.js"></script>
+
+</body>
+</html>
