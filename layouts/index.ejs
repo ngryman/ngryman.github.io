@@ -51,14 +51,16 @@ var ngryman = {
 /**
  * Here are my latest projects or contributions.
  */
-ngryman.projects: [/* loading... */];
+ngryman.projects = [/* loading... */];
 
 /**
  * Here are my articles.
  */
 ngryman.articles = [{% articles.forEach(function(article) { %}
   "[{%= article.title %}](articles/{%= article.urlTitle %})"{% }); %}
-];</code></pre>
+];
+
+console.log(ngryman);</code></pre>
 </main>
 
 <!-- external deps, from a global cdn -->
