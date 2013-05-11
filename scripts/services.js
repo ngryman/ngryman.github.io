@@ -1,6 +1,7 @@
 'use strict';
 
-var config = require('./config');
+var config = require('./config'),
+	$ = require('jquery');
 
 /**
  * https://gist.github.com/ngryman/5266324

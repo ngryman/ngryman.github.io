@@ -21,7 +21,10 @@ module.exports = function(grunt) {
 				options: {
 					stripBanners: true,
 					banner: '<%= meta.banner %>\n',
-					basepath: 'scripts'
+					basepath: 'scripts',
+					replace: {
+						'jquery': 'window.$'
+					}
 				},
 				src: 'scripts/**/*.js',
 				dest: 'app.js'

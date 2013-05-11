@@ -22,7 +22,8 @@
     "grunt-github-pages": "0.0.3",
     "grunt-markdown": "~0.2.0",
     "marked": "~0.2.8",
-    "inflection": "~1.2.5"
+    "inflection": "~1.2.5",
+    "grunt-contrib-gluejs": "0.0.2"
   },
   "engines": {
     "node": "0.8.x"

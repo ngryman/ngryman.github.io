@@ -23,6 +23,19 @@ module.exports = config;},
 var config = require('./config'),
 	services = require('./services');
 
+// 1337 redirections
+var redirects = {
+	'/@': 'https://twitter.com/ngryman',
+	'/t': 'https://twitter.com/ngryman',
+	'/+': 'https://plus.google.com/116260634660700511285', // waiting for the pretty url here :)
+	'/~': 'https://github.com/ngryman',
+	'/g': 'https://github.com/ngryman',
+};
+var url = redirects[window.location.pathname];
+if (url) {
+	window.location.replace(url);
+}
+
 // track with GGA only if when hosted on github
 if (!config.local) {
 	services.gga();
@@ -36,9 +49,11 @@ if (config.home) {
 else {
 	services.installDisqus();
 }},
+"jquery": { exports: window.$ },
 "services.js": function(module, exports, require){'use strict';
 
-var config = require('./config');
+var config = require('./config'),
+	$ = require('jquery');
 
 /**
  * https://gist.github.com/ngryman/5266324
@@ -58,7 +73,6 @@ function async(u) {
  * load gga
  */
 function gga() {
-	if (local) return;
 	window._gaq = [['_setAccount', 'UA-5779130-2'], ['_trackPageview']];
 	async(['google-analytics.com/ga']);
 }
@@ -67,7 +81,6 @@ function gga() {
  * load disqus
  */
 function disqus() {
-	if (local) return;
 	window.disqus_shortname = 'ngrymansh';
 	async(['ngrymansh.disqus.com/embed']);
 }
