@@ -16,11 +16,12 @@ module.exports = function(grunt) {
 			},
 			files: ['Gruntfile.js', 'tasks/*.js', 'scripts/**/*.js']
 		},
-		concat: {
+		gluejs: {
 			all: {
 				options: {
 					stripBanners: true,
-					banner: '<%= meta.banner %>\n'
+					banner: '<%= meta.banner %>\n',
+					basepath: 'scripts'
 				},
 				src: 'scripts/**/*.js',
 				dest: 'app.js'
@@ -79,7 +80,7 @@ module.exports = function(grunt) {
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-gluejs');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-connect');
