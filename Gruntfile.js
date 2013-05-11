@@ -87,8 +87,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-mocha');
 	grunt.loadTasks('tasks');
 
-	grunt.registerTask('default', ['jshint', 'concat']);
+	grunt.registerTask('default', ['jshint', 'gluejs']);
 
-	grunt.registerTask('local', ['jshint', 'concat', 'blog:local']);
-	grunt.registerTask('dist', ['jshint', 'concat', 'blog:dist']);
+	grunt.registerTask('local', ['jshint', 'gluejs', 'blog:local']);
+	grunt.registerTask('dist', ['jshint', 'gluejs', 'blog:dist']);
 };
