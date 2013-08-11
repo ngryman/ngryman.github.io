@@ -82,14 +82,15 @@ function githubProjects() {
 
 		// projects list - builds up Prism HTML to render as a JavaScript array
 		var projectsHtml = projects.map(function(project) {
-			return '  <span class="token string">"<a class="token md-link" href="' + project.html_url + '">' + project.name + '</a>"</span>';
-		}).join('<span class="token punctuation">,\n</span>') + '\n';
+			return '<span class="token string">"<a class="token md-link" href="' + project.html_url + '">' + project.name + '</a>"</span>';
+		});
 
 		// projects injection - inject it in place of the /* loading... */ placeholder
-		var $placeholder = $('.token.comment').filter(function() {
-			return this.innerHTML == '[/* loading... */';
+		$('.token.string').filter(function() {
+			return this.innerHTML == "'loading...'";
+		}).each(function(index) {
+			$(this).replaceWith(projectsHtml[index]);
 		});
-		$placeholder.replaceWith('<span class="token punctuation">[</span>\n' + projectsHtml);
 	});
 }
 
