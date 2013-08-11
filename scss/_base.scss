@@ -6,21 +6,27 @@ html, body {
 	margin: 0;
 	min-width: 320px;
 	min-height: 100%;
-	font-size: 62.5%;
+}
 
-	/* on touch devices only */
-	-webkit-text-size-adjust: 100%;
-	-ms-text-size-adjust: 100%;
+html {
+	font-size: 62.5%;
 }
 
 body {
-	font-size: 160%;
-	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
-	color: #222;
+	font-size: 120%;
+	font-family: 'Lora', Georgia, serif;
+	color: #4e4848;
 
 	/* enhances font rendering? */
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
+
+	/* on touch devices only */
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+	@include large-and-up {
+		font-size: 160%;
+	}
 }
 
 main {
@@ -28,36 +34,42 @@ main {
 }
 
 h1, h2, h3 {
-	font-family: 'Armwrestler', Helvetica, Arial, sans-serif;
-	color: #444;
+	font-family: 'Lato', Helvetica, Arial, sans-serif;
+	font-weight: bold;
+	font-size: 2em;
 }
 
 h1 {
 	padding: .3rem 1rem;
-	font-size: 2rem;
-	font-weight: bold;
-	line-height: 2;
+	line-height: 150%;
 	text-align: center;
 	-webkit-text-stroke: 0.5px;
-	@include xlarge-size-and-up {
-		font-size: 4rem;
-	}
 }
 
 h2 {
-	margin: 2rem 0;
-	font-size: 2.8rem;
-	font-weight: 100;
-	@include text-shadow(0 1px 1px #ddd);
+	margin: 1rem 0;
+	line-height: 180%;
 }
 
 h3 {
 	margin: 1rem 0;
 	border-bottom: 1px solid #ddd;
-	font-size: 2rem;
 	font-weight: 100;
 	line-height: 4rem;
-	@include text-shadow(0 1px 1px #ddd);
+}
+
+/** space between content */
+p, ul, .gist, pre[class*='language-'] {
+	margin: 0 0 2.5rem;
+}
+
+/** content formatting */
+p, li {
+	font-size: 115%;
+	line-height: 180%;
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	hyphens: auto;
 }
 
 a {
@@ -68,14 +80,6 @@ a {
 	&:hover {
 		border-bottom-color: #41b7d8;
 	}
-}
-
-p {
-	margin: 1.5rem 0;
-	line-height: 2.4rem;
-	-webkit-hyphens: auto;
-	-moz-hyphens: auto;
-	hyphens: auto;
 }
 
 pre {
@@ -91,11 +95,11 @@ code {
 
 	p > &,
 	li > & {
-		margin: 0 .2em;
+		margin: 0 .2rem;
 		border: 1px solid #eaeaea;
 		border-radius: 3px;
 		background-color: #f8f8f8;
-		padding: .2em .5em;
+		padding: .2rem .3rem;
 		color: #555;
 	}
 

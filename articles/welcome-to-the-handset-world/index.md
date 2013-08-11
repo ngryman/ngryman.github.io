@@ -65,6 +65,6 @@ DOM manipulation is very slow, not only because the browser
 {
   "title": "Welcome to the handset world",
   "created": "2013-04-27T19:57:35.088Z",
-  "updated": "2013-05-02T15:50:36.804Z"
+  "updated": "2013-08-11T15:23:11.349Z"
 }
 ```

@@ -43,6 +43,6 @@ Right of the bat, here is the script:
   "title": "Upstart with forever for your node.js application",
   "created": "2012-10-07T16:13:26.149Z",
   "published": "true",
-  "updated": "2013-05-08T15:58:37.554Z"
+  "updated": "2013-08-11T15:23:11.348Z"
 }
 ```

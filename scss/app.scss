@@ -9,7 +9,7 @@
 //
 //// classes
 @import 'base';
-@import 'fonts';
+//@import 'fonts';
 
 //@import 'icons';
 //@import 'anims';
@@ -17,12 +17,10 @@
 main {
 	min-height: 100%;
 	padding: 1em;
-	@include normal-size-and-up {
-		padding: 2rem 4rem;
-	}
-	@include xlarge-size-and-up {
-		width: 80rem;
+	@include large-and-up {
+		width: 70rem;
 		margin: 0 auto;
+		padding: 0;
 	}
 }
 
@@ -38,7 +36,7 @@ main {
 	height: 6rem;
 	@include box-shadow(0 0 5px #aeaeae);
 	@include rotate(5deg);
-	@include large-size-and-up {
+	@include large-and-up {
 		width: 8rem;
 		height: 8rem;
 	}

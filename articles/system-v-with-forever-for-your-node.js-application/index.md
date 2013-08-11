@@ -24,6 +24,6 @@ To enable your boot script:
   "title": "System V with forever for your node.js application",
   "created": "2012-10-08T21:57:04.149Z",
   "published": "true",
-  "updated": "2013-05-08T15:58:37.554Z"
+  "updated": "2013-08-11T15:23:11.349Z"
 }
 ```

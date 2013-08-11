@@ -34,7 +34,7 @@ module.exports = function(grunt) {
 			options.local = false;
 		}
 		else {
-			options.host = path.resolve(process.cwd()) + '/';
+			options.host = 'http://localhost:3000/';
 			options.local = true;
 		}
 
