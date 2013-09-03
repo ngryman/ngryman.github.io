@@ -49,6 +49,7 @@ main {
 pre[class*='language-'] {
 	position: relative;
 	overflow-x: hidden; /* this is to avoid sometimes initial useless scrollbar */
+
 	code {
 		opacity: 0;
 		@include transition(opacity 1s);
@@ -63,6 +64,10 @@ pre[class*='language-'] {
 
 .token a {
 	color: #41b7d8;
+}
+
+.token.operator {
+	background: transparent;
 }
 
 //
