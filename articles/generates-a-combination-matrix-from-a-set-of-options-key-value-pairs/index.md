@@ -1,12 +1,17 @@
-For my next craft, [ribs], I want my tests to cover the maximum use cases keeping the whole thing as **DRY** as possible. This is a good occasion for me to learn and abuse of some techniques: [curry] for example. This will be the topic my next article, when all tests will be written. One day I hope!
+For my next craft, [ribs], I want my tests to cover the maximum use cases, keeping the whole thing as **DRY** as possible. This is a good occasion for me to learn and abuse of some techniques: [curry] for example. This will be the topic my next article, when all tests will be written. One day I hope!
 
-Ok, let's focus on a narrower topic: testing all possible combination of a function's *options*. By *options*, I mean *named arguments* (i.e. `fn({ width: 16, height: 9 }`). By nature, all of these arguments should be optional. So if you are doing things right, you should provide a default value for each of those options.
+Ok, let's focus on a narrower topic: testing all possible combination of a function's *options*. By *options*, I mean *named arguments* (i.e. `fn({ width: 16, height: 9 })`). By nature, all of those arguments should be optional. So if you are doing things right, you should provide a default value for each of those options.
 
-Now let's say you want to write test to check out how the function behaves when providing some arguments, but not others. And let's that you are writting a function to resize an image. Your **api** provides two named arguments: `width` and `height`. You want to test all possible interactions between those two variable, that is:
- - `width` but not `height.
- - `height` but not `width`.
- - neither.
+Now let's say you want to write test to check out how the function behaves when providing some arguments, but not others. And for example purpose, let's say that you are writting a function to resize images. What a coincidence!
+
+Your **api** provides two named arguments: `width` and `height`. You want to test all possible interactions between those two variable:
+
  - both.
+ - `width` but not `height`.
+ - `height` but not `width`.
+ - none.
+
+## Basic approach
  
 When writting your test, you would probably do something like this:
 
@@ -19,7 +24,7 @@ describe('resize', function() {
 });
 ```
 
-Note the `checkAspectRatio` function, it uses curry. Tasty, isn't it?
+Note the `checkAspectRatio` function, it uses **curry**. Tasty, isn't it?
 
 Well, this covers all possible combination between your named arguments. But this is tedious to write and could be wrapped into a single test like this:
 
@@ -36,9 +41,9 @@ describe('resize', function() {
 });
 ```
 
-Ok this makes sense. You bruteforce your function, testing if the desired behavior is fulfilled.
+Ok this makes sense. You bruteforce your function, testing if the desired behavior is fulfilled, whatever arguments are present or not.
 
-Now let's say our library has a lot of success (I know I'm dreaming), and our function needs an additional argument: `mode`. We would now have to test `2^3: 8` cases. This is quite annoying...
+Now let's say our library has a lot of success, and users ask you to add an additional argument: `mode`. We would now have to test `2^3: 8` cases. This becomes really boring...
 
 What if we could use a method to check all test cases, keeping it **DRY** and that would be able to scale up to any number of arguments. Oh, I hear from the **npm** registry: **optify**!!!
 
@@ -50,21 +55,20 @@ Our test would become something like this:
 ```javascript
 describe('resize', function() {
 	it('should keep aspect ratio', function(done) {
-    	optify(
-        	{ width: 42, height: 1337, mode: 'cover' },
-            checkAspectRatio
-        );
+    	optify({ width: 42, height: 1337, mode: 'cover' }, checkAspectRatio);
     });
 });
 ```
 
-For informed observers, not that the `checkAspectRatio` function's arguments are reversed in this implementation.
+For informed observers, note that the `checkAspectRatio` function's arguments have been switched in this implementation.
 
 In this version, **optify** accepts 2 arguments:
+
  - a set of named arguments and their value.
  - a callback mapped over each possibility.
 
 This will call the `checkAspectRatio` function **8** times, with the following values:
+
  - `{ width: 42,        height: 1337,      mode: 'cover'   }`
  - `{ width: undefined, height: 1337,      mode: 'cover'   }`
  - `{ width: 42,        height: undefined, mode: 'cover'   }`
@@ -139,7 +143,11 @@ Note that you will have duplicates as **optify** is not meant for this.
 
 I hope this can help somebody, somehow :)
 
-Checkout out **optify** or take a look at **ribs**.
+Checkout out [optify] or take a look at [ribs].
+
+[ribs]: https://github.com/ngryman/ribs
+[optify]: https://github.com/ngryman/optify
+[curry]: http://hughfdjackson.com/javascript/2013/07/06/why-curry-helps
 
 ---
 ```json
