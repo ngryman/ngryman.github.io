@@ -1,0 +1,212 @@
+<!doctype html>
+<!--                                                  _
+                                                     | |
+   _ __   __ _ _ __ _   _ _ __ ___   __ _ _ __    ___| |__
+  | '_ \ / _` | '__| | | | '_ ` _ \ / _` | '_ \  / __| '_ \
+  | | | | (_| | |  | |_| | | | | | | (_| | | | |_\__ \ | | |
+  |_| |_|\__, |_|   \__, |_| |_| |_|\__,_|_| |_(_)___/_| |_|
+          __/ |      __/ |
+         |___/      |___/
+
+  Because ASCII art matters...
+
+  I salute you young h@x0r.
+  I invite you to open the humans.txt file for more info about some cool stuff used to make this blog.
+
+  May the source be with you :)
+
+  ~ngryman();
+-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//themes.googleusercontent.com">
+
+    <base href="http://ngryman.sh">
+    <title>ngryman.sh • Generate a combination matrix from a set of key/value pairs</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <link rel="canonical" href="http://ngryman.sh/articles/generate-a-combination-matrix-from-a-set-of-keyvalue-pairs">
+    <link href="favicon.ico" rel="icon">
+
+    <!-- twitter cards -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Generate a combination matrix from a set of key/value pairs">
+    <!--<meta name="twitter:image" content="http://ngryman.sh/articles/generate-a-combination-matrix-from-a-set-of-keyvalue-pairs.jpg?w=120">-->
+    <meta name="twitter:url" content="http://ngryman.sh/articles/generate-a-combination-matrix-from-a-set-of-keyvalue-pairs">
+    <meta name="twitter:description" content="For my next craft, ribs, I want my tests to cover the maximum use cases, keeping the whole thing as DRY as possible. This is a good occasion for me to learn and abuse of some techniques: curry for exa">
+    <meta name="twitter:site" content="@ngryman">
+    <meta name="twitter:creator" content="@ngryman">
+
+    <!-- open graph -->
+    <meta property="og:type" content="article">
+    <!--<meta property="og:title" content="http://ngryman.sh/articles/generate-a-combination-matrix-from-a-set-of-keyvalue-pairs.jpg?w=120">-->
+    <meta property="og:image" content="Generate a combination matrix from a set of key/value pairs">
+    <meta property="og:url" content="http://ngryman.sh/articles/generate-a-combination-matrix-from-a-set-of-keyvalue-pairs">
+    <meta property="og:description" content="For my next craft, ribs, I want my tests to cover the maximum use cases, keeping the whole thing as DRY as possible. This is a good occasion for me to learn and abuse of some techniques: curry for exa">
+    <meta property="og:site_name" content="http://ngryman.sh">
+
+    <link href="vendor/prism/prism.css" rel="stylesheet">
+	<link href="//fonts.googleapis.com/css?family=Lato|Lora:400,700" rel="stylesheet">
+    <link href="app.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<main>
+    <article>
+
+        <h1>Generate a combination matrix from a set of key/value pairs</h1>
+
+        <p class="author vcard">
+            <span>By</span>
+            <a class="url fn" rel="author" href="https://plus.google.com/116260634660700511285">Nicolas Gryman</a>.
+            </span>
+        </p>
+
+        <p>For my next craft, <a href="https://github.com/ngryman/ribs">ribs</a>, I want my tests to cover the maximum use cases, keeping the whole thing as <em>DRY</em> as possible. This is a good occasion for me to learn and abuse of some techniques: <a href="http://hughfdjackson.com/javascript/2013/07/06/why-curry-helps">curry</a> for example. This will be the topic my next article, when all tests will be written. One day I hope!</p>
+<p>Ok, let&#39;s focus on a narrower topic: testing all possible combination of a function&#39;s <em>options</em>. By options, I mean <em>named arguments</em> (i.e. <code>fn({ width: 16, height: 9 })</code>). By nature, all of those arguments should be optional. So if you are doing things right, you should provide a default value for each of those options.</p>
+<p>Now let&#39;s say you want to write tests to check out how the function behaves when providing some arguments, but not others. And for example purpose, let&#39;s say that you are writing a function to resize images. What a coincidence!</p>
+<p>Your <em>api</em> provides two named arguments: <code>width</code> and <code>height</code>. You want to test all possible interactions between those two variables:</p>
+<ul>
+<li>both.</li>
+<li><code>width</code> but not <code>height</code>.</li>
+<li><code>height</code> but not <code>width</code>.</li>
+<li>none.</li>
+</ul>
+<h2>Basic approach</h2>
+<p>When writing your test, you would probably do something like this:</p>
+<pre><code class="language-javascript">describe(&#39;resize&#39;, function() {
+    it(&#39;should keep aspect ratio given a width only&#39;, checkAspectRatio({
+        width: 42
+    }));
+    it(&#39;should keep aspect ratio given a height only&#39;, checkAspectRatio({
+        height: 1337
+    }));
+    it(&#39;should keep aspect ratio given both width and height&#39;, checkAspectRatio({
+        width: 42, height: 1337
+    }));
+    it(&#39;should keep aspect ratio given no arguments&#39;, checkAspectRatio({}));
+});</code></pre>
+<p>Note the <code>checkAspectRatio</code> function, it uses <em>curry</em>. Tasty, isn&#39;t it?</p>
+<p>Well, this covers all possible combination between your named arguments. But this is tedious to write and could be wrapped into a single test:</p>
+<pre><code class="language-javascript">describe(&#39;resize&#39;, function() {
+    it(&#39;should keep aspect ratio&#39;, function(done) {
+        async.parallel([
+            checkAspectRatio({ width: 42 }),
+            checkAspectRatio({ height: 1337 }),
+            checkAspectRatio({ width: 42, height: 1337 }),
+            checkAspectRatio({})
+        ], done);
+    });
+});</code></pre>
+<p>Ok this makes sense. You bruteforce your function, testing if the desired behavior is fulfilled, whatever arguments are present or not.</p>
+<p>Now let&#39;s say our library has a lot of success, and users ask you to add an additional argument: <code>mode</code>. We would now have to test <code>2^3: 8</code> cases. This becomes really boring...</p>
+<p>What if we could use a method to check all test cases, keeping it <em>DRY</em> and that would be able to scale up to any number of arguments. Oh, I hear from the <strong>npm</strong> registry: <strong>optify</strong>!!!</p>
+<h2>Optify</h2>
+<p>What <strong>optify</strong> does is really simple, yet powerful. Given any set of named arguments, it returns an array of possible combinations.
+Our test would become something like this:</p>
+<pre><code class="language-javascript">describe(&#39;resize&#39;, function() {
+    it(&#39;should keep aspect ratio&#39;, function(done) {
+        optify({ width: 42, height: 1337, mode: &#39;cover&#39; }, checkAspectRatio);
+    });
+});</code></pre>
+<p>For informed observers, note that the <code>checkAspectRatio</code> function&#39;s arguments have been switched in this implementation.</p>
+<p>In this version, <strong>optify</strong> accepts 2 arguments:</p>
+<ul>
+<li>a set of <em>named arguments</em> and their value.</li>
+<li>a callback <em>mapped over each possibility</em>.</li>
+</ul>
+<p>This will call the <code>checkAspectRatio</code> function <strong>8</strong> times, with the following values:</p>
+<pre><code class="language-javascript">[
+    { width: 42,        height: 1337,      mode: &#39;cover&#39;   }
+    { width: undefined, height: 1337,      mode: &#39;cover&#39;   }
+    { width: 42,        height: undefined, mode: &#39;cover&#39;   }
+    { width: undefined, height: undefined, mode: &#39;cover&#39;   }
+    { width: 42,        height: 1337,      mode: undefined }
+    { width: undefined, height: 1337,      mode: undefined }
+    { width: 42,        height: undefined, mode: undefined }
+    { width: undefined, height: undefined, mode: undefined }
+]</code></pre>
+<p>If you want to provide a different value than <code>undefined</code>, you can provide a global one:</p>
+<pre><code class="language-javascript">optify({ width: 42, height: 1337, mode: &#39;cover&#39; }, 0, checkAspectRatio);
+
+// gives:
+[
+    { width: 42, height: 1337, mode: &#39;cover&#39; }`
+    { width: 0,  height: 1337, mode: &#39;cover&#39; }`
+    { width: 42, height: 0,    mode: &#39;cover&#39; }`
+    { width: 0,  height: 0,    mode: &#39;cover&#39; }`
+    { width: 42, height: 1337, mode: 0       }`
+    { width: 0,  height: 1337, mode: 0       }`
+    { width: 42, height: 0,    mode: 0       }`
+    { width: 0,  height: 0,    mode: 0       }`
+]</code></pre>
+<p>Or one per arguments like this:</p>
+<pre><code class="language-javascript">optify(
+    { width: 42,  height: 1337, mode: &#39;cover&#39; },
+    { width: 160, height: 90,   mode: null    },
+    checkAspectRatio
+);
+
+// gives:
+[
+    { width: 42,  height: 1337, mode: &#39;cover&#39; }`
+    { width: 160, height: 1337, mode: &#39;cover&#39; }`
+    { width: 42,  height: 90,   mode: &#39;cover&#39; }`
+    { width: 160, height: 90,   mode: &#39;cover&#39; }`
+    { width: 42,  height: 1337, mode: null    }`
+    { width: 160, height: 1337, mode: null    }`
+    { width: 42,  height: 90,   mode: null    }`
+    { width: 160, height: 90,   mode: null    }`
+]</code></pre>
+<h3>Bonus: Check all possibilities against a value</h3>
+<p>As you can specify both values and <em>undefined values</em>, you can cross data against a <em>frozen</em> value:</p>
+<pre><code class="language-javascript">optify(
+    { width: 42, height: 1337, mode: &#39;cover&#39; },
+    { width: 42, height: 0,    mode: null    },
+    checkAspectRatio
+);
+
+// gives:
+[
+    { width: 42, height: 1337, mode: &#39;cover&#39; }`
+    { width: 42, height: 1337, mode: &#39;cover&#39; }`
+    { width: 42, height: 90,   mode: &#39;cover&#39; }`
+    { width: 42, height: 90,   mode: &#39;cover&#39; }`
+    { width: 42, height: 1337, mode: null    }`
+    { width: 42, height: 1337, mode: null    }`
+    { width: 42, height: 90,   mode: null    }`
+    { width: 42, height: 90,   mode: null    }`
+]</code></pre>
+<p>Note that you will have duplicates as <strong>optify</strong> is not designed for this.</p>
+<p>I hope this can help somebody, somehow :)</p>
+<p>Checkout out <a href="https://github.com/ngryman/optify">optify</a> or take a look at <a href="https://github.com/ngryman/ribs">ribs</a>!</p>
+
+
+        <section id="comments">
+            <div id="disqus_thread"></div>
+        </section>
+    </article>
+</main>
+
+<!-- external deps, from a global cdn -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+
+<!-- external deps, hosted by bibi -->
+<script src="vendor/prism/prism.min.js"></script>
+
+<!--application-->
+<script src="app.js"></script>
+
+</body>
+</html>
