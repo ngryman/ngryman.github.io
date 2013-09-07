@@ -2,75 +2,142 @@ For my next craft, [ribs], I want my tests to cover the maximum use cases keepin
 
 Ok, let's focus on a narrower topic: testing all possible combination of a function's *options*. By *options*, I mean *named arguments* (i.e. `fn({ width: 16, height: 9 }`). By nature, all of these arguments should be optional. So if you are doing things right, you should provide a default value for each of those options.
 
-Now let's say you want to write unit test to check out how the function behaves when providing some arguments, but not others. And let's that you are writting a function to resize an image. Your **api** provides two named arguments: `width` and `height`. You want to test all possible interactions between those two variable, that is:
+Now let's say you want to write test to check out how the function behaves when providing some arguments, but not others. And let's that you are writting a function to resize an image. Your **api** provides two named arguments: `width` and `height`. You want to test all possible interactions between those two variable, that is:
  - `width` but not `height.
  - `height` but not `width`.
  - neither.
  - both.
  
-When writting your unit test, you would probably do something like this:
+When writting your test, you would probably do something like this:
 
 ```javascript
 describe('resize', function() {
-	it('should keep aspect ratio given a width only', checkUbberiness({ width: 42 }));
-    it('should keep aspect ratio given a height only', checkUbberiness({ height: 1337 }));
-    it('should keep aspect ratio given both width and height', checkUbberiness({ width: 42, height: 1337 }));
-    it('should keep aspect ratio given no arguments', checkUbberiness({}));
+	it('should keep aspect ratio given a width only', checkAspectRatio({ width: 42 }));
+    it('should keep aspect ratio given a height only', checkAspectRatio({ height: 1337 }));
+    it('should keep aspect ratio given both width and height', checkAspectRatio({ width: 42, height: 1337 }));
+    it('should keep aspect ratio given no arguments', checkAspectRatio({}));
 });
 ```
 
-Note the `checkUbber` function, it uses curry :)
+Note the `checkAspectRatio` function, it uses curry. Tasty, isn't it?
 
-Well this covers all possible interactions between your named arguments. But this is tedious to right and could be wrapped into a single test that cover intractions:
+Well, this covers all possible combination between your named arguments. But this is tedious to write and could be wrapped into a single test like this:
 
 ```javascript
-describe('my ubber function', function() {
-	it('should be ubber given any given argument(s)', function(done) {
+describe('resize', function() {
+	it('should keep aspect ratio', function(done) {
     	async.parallel([
-        	checkUbberiness({ width: 42 }),
-            checkUbberiness({ height: 1337 }),
-            checkUbberiness({ width: 42, height: 1337 }),
-            checkUbberiness({})
-        ]);
+        	checkAspectRatio({ width: 42 }),
+            checkAspectRatio({ height: 1337 }),
+            checkAspectRatio({ width: 42, height: 1337 }),
+            checkAspectRatio({})
+        ], done);
     });
 });
 ```
 
-Unit test purist might say:
-> You should keep those tests separated
+Ok this makes sense. You bruteforce your function, testing if the desired behavior is fulfilled.
 
-Perhaps, but I find it less maintanable. This kind of test is perhaps at the cross of TDD and BDD. But that's not the point.
+Now let's say our library has a lot of success (I know I'm dreaming), and our function needs an additional argument: `mode`. We would now have to test `2^3: 8` cases. This is quite annoying...
 
-Now let's say our library has a lot of success and needs an additional param: `mode`. We would have to test now `2^3: 8` cases. This is quite annoying.
+What if we could use a method to check all test cases, keeping it **DRY** and that would be able to scale up to any number of arguments. Oh, I hear from the **npm** registry: **optify**!!!
 
-What if we could use a method to check all test cases, keeping **DRY** and that could scale up to any number of arguments. **optify** comes!
+## Optify
 
-What **optify** does is really simple yet powerful. Given any set of named arguments, it returns an array of interaction possiblities.
+What **optify** does is really simple, yet powerful. Given any set of named arguments, it returns an array of possible combinations.
 Our test would become something like this:
 
 ```javascript
-describe('my ubber function', function() {
-	it('should be ubber given any given argument(s)', function() {
+describe('resize', function() {
+	it('should keep aspect ratio', function(done) {
     	optify(
         	{ width: 42, height: 1337, mode: 'cover' },
-            { width: 0, height: 0, mode: null },
-            checkUbberiness
+            checkAspectRatio
         );
     });
 });
 ```
 
-This will call the `checkUbberiness` function with the following values:
- - `{ width: 42, height: 1337, mode: 'cover' }`
- - `{ width: 0,  height: 1337, mode: 'cover' }`
- - `{ width: 42, height: 0,    mode: 'cover' }`
- - `{ width: 0,  height: 0,    mode: 'cover' }`
- - `{ width: 42, height: 1337, mode: null    }`
- - `{ width: 0,  height: 1337, mode: null    }`
- - `{ width: 42, height: 0,    mode: null    }`
- - `{ width: 0,  height: 0,    mode: null    }`
+For informed observers, not that the `checkAspectRatio` function's arguments are reversed in this implementation.
 
-That's it, nothing fancy, but usefull.
+In this version, **optify** accepts 2 arguments:
+ - a set of named arguments and their value.
+ - a callback mapped over each possibility.
+
+This will call the `checkAspectRatio` function **8** times, with the following values:
+ - `{ width: 42,        height: 1337,      mode: 'cover'   }`
+ - `{ width: undefined, height: 1337,      mode: 'cover'   }`
+ - `{ width: 42,        height: undefined, mode: 'cover'   }`
+ - `{ width: undefined, height: undefined, mode: 'cover'   }`
+ - `{ width: 42,        height: 1337,      mode: undefined }`
+ - `{ width: undefined, height: 1337,      mode: undefined }`
+ - `{ width: 42,        height: undefined, mode: undefined }`
+ - `{ width: undefined, height: undefined, mode: undefined }`
+
+If you want to provide a different value than `undefined`, you can provide a global one like this:
+
+```javascript
+optify({ width: 42, height: 1337, mode: 'cover' }, 0, checkAspectRatio);
+
+// [
+//     { width: 42, height: 1337, mode: 'cover' }`
+//     { width: 0,  height: 1337, mode: 'cover' }`
+//     { width: 42, height: 0,    mode: 'cover' }`
+//     { width: 0,  height: 0,    mode: 'cover' }`
+//     { width: 42, height: 1337, mode: 0       }`
+//     { width: 0,  height: 1337, mode: 0       }`
+//     { width: 42, height: 0,    mode: 0       }`
+//     { width: 0,  height: 0,    mode: 0       }`
+// ]
+```
+
+Or one per arguments like this:
+
+```javascript
+optify(
+	{ width: 42,  height: 1337, mode: 'cover' },
+    { width: 160, height: 90,   mode: null    },
+    checkAspectRatio
+);
+
+// [
+//     { width: 42,  height: 1337, mode: 'cover' }`
+//     { width: 160, height: 1337, mode: 'cover' }`
+//     { width: 42,  height: 90,   mode: 'cover' }`
+//     { width: 160, height: 90,   mode: 'cover' }`
+//     { width: 42,  height: 1337, mode: null    }`
+//     { width: 160, height: 1337, mode: null    }`
+//     { width: 42,  height: 90,   mode: null    }`
+//     { width: 160, height: 90,   mode: null    }`
+// ]
+```
+
+### Bonus: Check all possibilities against a value
+
+As you can specify both values and *undefined values*, you can cross data according a *frozen* value like this:
+
+```javascript
+optify(
+	{ width: 42, height: 1337, mode: 'cover' },
+    { width: 42, height: 0,    mode: null    },
+    checkAspectRatio
+);
+
+// [
+//     { width: 42, height: 1337, mode: 'cover' }`
+//     { width: 42, height: 1337, mode: 'cover' }`
+//     { width: 42, height: 90,   mode: 'cover' }`
+//     { width: 42, height: 90,   mode: 'cover' }`
+//     { width: 42, height: 1337, mode: null    }`
+//     { width: 42, height: 1337, mode: null    }`
+//     { width: 42, height: 90,   mode: null    }`
+//     { width: 42, height: 90,   mode: null    }`
+// ]
+```
+
+Note that you will have duplicates as **optify** is not meant for this.
+
+I hope this can help somebody, somehow :)
 
 Checkout out **optify** or take a look at **ribs**.
 
