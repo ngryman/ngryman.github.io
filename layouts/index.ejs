@@ -72,8 +72,8 @@ ngryman.projects = [
 /**
  * Here are my articles.
  */
-ngryman.articles = [{% articles.forEach(function(article) { %}
-  "[{%= article.title %}](articles/{%= article.urlTitle %})"{% }); %}
+ngryman.articles = [{% articles.forEach(function(article, i) { %}
+  "[{%= article.title %}](articles/{%= article.urlTitle %})"{%= (i < articles.length - 1 ? ',' : '') %}{% }); %}
 ];
 
 console.log(ngryman);</code></pre>
