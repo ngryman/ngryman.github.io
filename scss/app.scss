@@ -1,18 +1,6 @@
-//// third party
 @import 'compass';
-//@import 'compass/reset';
-//@import 'animation';
-//
-//// mixins
 @import 'mq';
-//@import 'colors';
-//
-//// classes
 @import 'base';
-//@import 'fonts';
-
-//@import 'icons';
-//@import 'anims';
 
 main {
 	min-height: 100%;
@@ -21,6 +9,18 @@ main {
 		width: 70rem;
 		margin: 0 auto;
 		padding: 0;
+	}
+}
+
+@include large-and-up {
+	html {
+		display: table;
+		width: 100%;
+	}
+
+	body {
+		display: table-cell;
+		vertical-align: middle;
 	}
 }
 
