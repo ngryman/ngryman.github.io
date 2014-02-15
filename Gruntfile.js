@@ -94,4 +94,25 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('local', ['jshint', 'gluejs', 'blog:local']);
 	grunt.registerTask('dist', ['jshint', 'gluejs', 'blog:dist']);
+
+	grunt.registerTask('new', function() {
+		var inflection = require('inflection'),
+			title = grunt.option('title'),
+			urlTitle = inflection.dasherize(title).replace(/\./g, '').toLocaleLowerCase(),
+			meta = {
+				title: title,
+				created: new Date(),
+				published: false,
+				updated: new Date()
+			};
+
+		grunt.file.mkdir('articles/' + urlTitle);
+		grunt.file.write('articles/' + urlTitle + '/index.md', stringifyMeta(meta));
+
+		function stringifyMeta(meta) {
+			var raw = JSON.stringify(meta, null, '  ');
+			raw = '\n\n---\n```json\n' + raw + '\n```\n';
+			return raw;
+		}
+	});
 };
