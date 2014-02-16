@@ -77,3 +77,38 @@ pre[class*='language-'] {
 #comments {
 	margin-top: 6rem;
 }
+
+//
+// splash rotation
+//
+
+.splash {
+	position: relative;
+	height: 444px;
+}
+
+.splash img {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	@include translateX(-50%);
+	border-radius: 50%;
+	opacity: 0;
+	-webkit-animation: fade 24s linear infinite;
+}
+
+.splash img:nth-child(2) {
+	-webkit-animation-delay: 8s;
+}
+
+.splash img:nth-child(3) {
+	-webkit-animation-delay: 16s;
+}
+
+@-webkit-keyframes fade {
+	0% { opacity: 0}
+	8.33% { opacity: 1 }
+	33.32% { opacity: 1 }
+	41.65% { opacity: 0 }
+	100% { opactiy: 0 }
+}
