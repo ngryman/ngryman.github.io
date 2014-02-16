@@ -103,7 +103,7 @@ module.exports = function(grunt) {
 								meta.layout = 'article.ejs';
 							}
 							// url title
-							meta.urlTitle = inflection.dasherize(meta.title).replace('/', '').toLocaleLowerCase();
+							meta.urlTitle = inflection.dasherize(meta.title.replace(/\/|(?:\.\.\.)|(?:\{.*\})/g, '').trim().toLocaleLowerCase());
 							// canonical url, good for seo
 							meta.canonicalUrl = url.resolve(meta.host, 'articles' + '/' + meta.urlTitle);
 							// article body
