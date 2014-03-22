@@ -23,7 +23,8 @@
     "grunt-markdown": "~0.2.0",
     "marked": "~0.2.8",
     "inflection": "~1.2.5",
-    "grunt-contrib-gluejs": "0.0.2"
+    "grunt-contrib-gluejs": "0.0.2",
+    "reading-time": "0.0.1"
   },
   "engines": {
     "node": "0.8.x"

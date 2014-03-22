@@ -6,7 +6,8 @@ var marked = require('marked'),
 	url = require('url'),
 	os = require('os'),
 	inflection = require('inflection'),
-	ejs = require('ejs');
+	ejs = require('ejs'),
+	readingTime = require('reading-time');
 
 module.exports = function(grunt) {
 	var _ = grunt.util._;
@@ -108,12 +109,15 @@ module.exports = function(grunt) {
 							meta.canonicalUrl = url.resolve(meta.host, 'articles' + '/' + meta.urlTitle);
 							// article body
 							meta.body = marked(article);
+							// reading time
+							meta.readingTime = readingTime(article).text;
 
 							// apply layout
 							fs.readFile('layouts/' + meta.layout, 'utf8', function(err, content) {
 								if (err) {
 									grunt.log.error(meta.title);
 									callback(err);
+									return;
 								}
 
 								article = ejs.render(content, meta);

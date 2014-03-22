@@ -71,6 +71,22 @@ pre[class*='language-'] {
 }
 
 //
+// info
+//
+
+.author,
+.reading-time {
+	display: inline-block;
+	width: 49%;
+	font-size: 80%;
+	color: #999;
+}
+
+.reading-time {
+	text-align: right;
+}
+
+//
 // comments
 //
 
