@@ -51,7 +51,7 @@
 					i = u.length, g;
 				while (i--) {
 					g = document.createElement('script');
-					g.src = 'http://' + u[i] + '.js';
+					g.src = 'https://' + u[i] + '.js';
 					s.parentNode.insertBefore(g, s);
 				}
 			}
