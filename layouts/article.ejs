@@ -25,7 +25,6 @@
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
 	<link rel="dns-prefetch" href="//themes.googleusercontent.com">
 
-    <base href="{%= host %}">
     <title>ngryman.sh • {%= title %}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
@@ -33,6 +32,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
     <link rel="canonical" href="{%= canonicalUrl %}">
+    <base href="{%= host %}">
     <link href="favicon.ico" rel="icon">
 
     <!-- twitter cards -->
@@ -50,7 +50,7 @@
     <meta property="og:image" content="{%= title %}">
     <meta property="og:url" content="{%= canonicalUrl %}">
     <meta property="og:description" content="{%=: body | strip | truncate:200 %}">
-    <meta property="og:site_name" content="http://ngryman.sh">
+    <meta property="og:site_name" content="https://ngryman.sh">
 
     <link href="vendor/prism/prism.css" rel="stylesheet">
 	<link href="//fonts.googleapis.com/css?family=Lato|Lora:400,700" rel="stylesheet">
@@ -88,7 +88,7 @@
 {% if (!local) { %}
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 {% } else { %}
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 {% }  %}
 
 <!-- external deps, hosted by bibi -->

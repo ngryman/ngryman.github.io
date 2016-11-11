@@ -31,7 +31,7 @@ module.exports = function(grunt) {
 
 		// builds full host string
 		if ('localhost' != options.hostname) {
-			options.host = 'http://' + options.hostname + (80 != options.port ? ':' + options.port : '');
+			options.host = '//' + options.hostname + (80 != options.port ? ':' + options.port : '');
 			options.local = false;
 		}
 		else {
